@@ -42,8 +42,7 @@ export default function RootLayout({
           signUpFallbackRedirectUrl="/dashboard">
           <ConvextClientProvider>
             <div className="flex flex-col min-h-screen">
-              <Header />
-              <main className="flex-grow">
+              <main>
                 {children}
               </main>
             </div>
