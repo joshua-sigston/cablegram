@@ -11,6 +11,7 @@ import { Button } from "../ui/button"
 import { UserButton, useUser } from "@clerk/nextjs"
 import { ChannelList } from "stream-chat-react"
 import { ChannelFilters, ChannelOptions, ChannelSort } from "stream-chat"
+import NewChatDialog from "../NewChatDialog"
 
 export function AppSidebar() {
     const { user } = useUser()
@@ -32,7 +33,9 @@ export function AppSidebar() {
             </SidebarHeader>
             <SidebarContent>
                 <SidebarGroup className="bg-slate-400 h-full">
-                    <Button variant="outline">Start New Chat</Button>
+                    <NewChatDialog>
+                        <Button variant="outline">Start New Chat</Button>
+                    </NewChatDialog>
                     <ChannelList
                         filters={filters}
                         options={options}
