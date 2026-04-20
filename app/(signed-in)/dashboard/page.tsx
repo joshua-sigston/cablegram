@@ -11,7 +11,7 @@ import { Channel, ChannelHeader, MessageInput, MessageList, Thread, useChatConte
 function DashboardPage() {
     const { user } = useUser()
     const router = useRouter
-    const { channel, setActionChannel } = useChatContext()
+    const { channel, setActiveChannel } = useChatContext()
     const { setOpen } = useSidebar()
 
     const handleCall = () => {
