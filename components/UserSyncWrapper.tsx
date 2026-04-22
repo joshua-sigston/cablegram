@@ -102,6 +102,6 @@ export default function UserSyncWrapper({ children }: { children: React.ReactNod
 
     // Render children once the setup processes are complete
     return (
-        <div>{children}</div>
+        <>{children}</>
     )
 }

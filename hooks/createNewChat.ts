@@ -18,34 +18,22 @@ export const useCreateNewChat = () => {
         // Any chat with more than 2 members is treated as a group chat
         const isGroupChat = members.length > 2
 
-        // If it's a 1-on-1 chat, we first want to check if a chat between these exact members already exists to avoid making duplicates.
+        // If it's a 1-on-1 chat, we can rely on Stream's distinct channel feature.
+        // By not providing a specific channel ID, Stream will automatically check if a distinct 
+        // channel between these exact two members exists. If it does, it returns it; if not, it creates it.
         if (!isGroupChat) {
-            // Query the Stream database for any existing "messaging" channels with exactly these members
-            const existingChannel = await streamClient.queryChannels(
-                {
-                    type: "messaging",
-                    members: { $eq: members } // $eq ensures exact match
-                },
-                { created_at: -1 }, // Sort by most recently created
-                { limit: 1 } // We only need the first result
-            )
-
-            // If we found a potential match, verify its membership exactly
-            if (existingChannel.length > 0) {
-                const channel = existingChannel[0]
-                const channelMembers = Object.keys(channel.state.members)
-
-                // Confirm that both the requested members and the existing members strictly equal 2, 
-                // and that all requested members are inside the existing channel.
-                if (
-                    channelMembers.length === 2 && 
-                    members.length === 2 && 
-                    members.every((member) => channelMembers.includes(member))
-                ) {
-                    console.log("Existing 1-1 chat found!")
-                    // Instead of creating a new duplicate channel, we just return the existing one!
-                    return channel
-                }
+            try {
+                const channel = streamClient.channel("messaging", {
+                    members,
+                    created_by_id: createdBy
+                })
+                
+                // We return the channel instance immediately, and the component can set it as active.
+                // Stream Chat React UI components will automatically call `channel.watch()` internally.
+                return channel
+            } catch (error) {
+                console.error("Error creating/fetching 1-on-1 chat:", error)
+                throw error
             }
         }
 
